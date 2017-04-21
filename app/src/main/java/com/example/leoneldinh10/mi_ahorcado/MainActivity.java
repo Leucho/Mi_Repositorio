@@ -13,7 +13,7 @@ import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
 
-    String palabra = "fedeprueba";
+    String palabra = "leo";
     int total_coincidencias_varGlobal=0;
 
     @Override
