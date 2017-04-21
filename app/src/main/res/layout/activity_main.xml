@@ -1260,7 +1260,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/usarMoneda"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:onClick="usar_moneda"/>
 
             </LinearLayout>
 
@@ -1278,7 +1279,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/cambiarPalabra"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:onClick="cambiar_palabra"/>
 
 
             </LinearLayout>

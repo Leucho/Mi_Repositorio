@@ -13,8 +13,14 @@ import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
 
-    String palabra = "casa";
+    String palabra = "arquitectura";
     int total_coincidencias_varGlobal=0;
+
+    char palabra_modificada[]=palabra.toCharArray();
+
+
+    int posicion_primer_letra_vacia;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -756,7 +762,14 @@ public class MainActivity extends AppCompatActivity {
                 alguna_coincidencia++;
 
                 total_coincidencias_varGlobal++;
+
+               palabra_modificada[i] = '_';
+
             }
+
+
+
+
 
         }   //FIN ciclo for
 
@@ -773,6 +786,10 @@ public class MainActivity extends AppCompatActivity {
             nroVidas.setText("6");
             botones_visibles();      //Botones apretados de abecedario pasan a ser visibles
             total_coincidencias_varGlobal = 0;      //Se inicializa de nuevo la variable global creada
+
+
+            palabra_modificada = palabra.toCharArray(); //NUeva linea agregada en casa del Fede -> Porque una vez qe gana, no funciona bien el USAR MONEDA
+
         }
 
 
@@ -917,7 +934,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button btn_r = (Button) findViewById(R.id.btnR);
         btn_r.setVisibility(View.VISIBLE);
-
+//esto es un comentario
         Button btn_s = (Button) findViewById(R.id.btnS);
         btn_s.setVisibility(View.VISIBLE);
 
@@ -949,8 +966,7 @@ public class MainActivity extends AppCompatActivity {
     {
         Toast.makeText(this, "Perdiste Pollito", Toast.LENGTH_LONG).show();
 
-      //  NotificationManager notificador = (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
-      //  Notification notificacion = new Notification(android.R.drawable.sym_call_missed, "Perdiste hermanito", System.currentTimeMillis());
+        palabra_modificada = palabra.toCharArray();  // Agregada linea en la casa del FEDE 21-4-2017
     }
 
 
@@ -976,13 +992,49 @@ public class MainActivity extends AppCompatActivity {
         corto_pieDer.setText("");
     }
 
-
-    public void calcularMonedas()
+    public void usar_moneda(View v)
     {
+        int ubicacion = 0;
+
+        for (int i = 0; i < palabra.length();i++)
+        {
+            if(palabra_modificada[i] != '_')
+            {
+               ubicacion= i;
+            }
+        }
+
+        TextView nroMonedas = (TextView) findViewById(R.id.textNroMonedas);
+        int cantidad_mone = Integer.parseInt(nroMonedas.getText().toString());
+
+        if (cantidad_mone > 0)
+        {
+            verificarExistenciaLetra(palabra.charAt(ubicacion)+"");
+            cantidad_mone = cantidad_mone - 1;
+            if(cantidad_mone == 0)
+            {
+                //POner el boton USAR MONEDA en enabled = false
+            }
+            nroMonedas.setText(cantidad_mone + "");
+        }
+        else
+        {
+            Toast.makeText(this, "NO tenes monedas Pollito", Toast.LENGTH_LONG).show();
+        }
 
 
     }
 
+
+    public void setear_botones()
+    {
+        botones_visibles();
+    }
+
+    public void cambiar_palabra(View v)
+    {
+        botones_visibles();
+    }
 
 
 }
