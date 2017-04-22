@@ -1026,15 +1026,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void setear_botones()
-    {
-        botones_visibles();
-    }
+
 
     public void cambiar_palabra(View v)
     {
         botones_visibles();
     }
+
+
+
+
+    /*
+    CLASE DE ADS 21/04/2017
+    Vimos los Unit Test     --- > Se hace sobre la minima unidad de testing, es decir sobre los metodos, y lo que se debe hacer es eliminar
+                                todas las dependencias del metodos a los metodos externos al de testing
+                                El Profe uso la libreria MOQ para hacer los Unit Test en .NET
+    Va atener cuatro partes :
+                        Arrange - >
+                        Act     - >
+                        Assert  - >
+
+     */
+
+
+
+
+
 
 
 }
