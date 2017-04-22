@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     char palabra_modificada[]=palabra.toCharArray();
 
-
+//cambio para probar
     int posicion_primer_letra_vacia;
 
 
