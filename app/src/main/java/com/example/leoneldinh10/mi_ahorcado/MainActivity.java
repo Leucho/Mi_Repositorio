@@ -20,8 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     int posicion_primer_letra_vacia;
-//comentario de eric
-
+//coment eric
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
