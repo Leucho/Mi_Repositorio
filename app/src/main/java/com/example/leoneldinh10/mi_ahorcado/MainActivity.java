@@ -12,7 +12,7 @@ import android.widget.Toast;
 import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
-
+    //comentario prueba commit y pull
     String palabra = "arquitectura";
     int total_coincidencias_varGlobal=0;
 
