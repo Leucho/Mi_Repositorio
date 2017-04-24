@@ -1,25 +1,32 @@
 package com.example.leoneldinh10.mi_ahorcado;
 
-import android.app.Notification;
-import android.app.NotificationManager;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static java.lang.Thread.sleep;
+import com.example.leoneldinh10.mi_ahorcado.Acceso_Base_Datos.BD_OpenHelper;
+
 
 public class MainActivity extends AppCompatActivity {
 
+
     String palabra = "arquitectura";
+
+
+
+
     int total_coincidencias_varGlobal=0;
 
     char palabra_modificada[]=palabra.toCharArray();
 
-
     int posicion_primer_letra_vacia;
+
+    BD_OpenHelper base_datos;
 
 
     @Override
@@ -27,11 +34,43 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        base_datos = new BD_OpenHelper(getApplicationContext());
+
+        palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
+
         limpiarLetras();
         letrasVisibles();
+
+
+
+        /*
+        base_datos.insertarPalabra(2,"cabeza");
+        base_datos.insertarPalabra(3,"mono");
+        base_datos.insertarPalabra(4,"cocodrilo");
+        base_datos.insertarPalabra(5,"elefante");
+        base_datos.insertarPalabra(6,"rinoceronte");
+        */
+
+        // base_datos.insertar_Palabras_en_BD();;
+
+
+
+
+        Log.d("MI BASE DE DATOS ---> ",base_datos.recuperarPalabrota(2));
+        Log.d("MI BASE DE DATOS ---> ",base_datos.recuperarPalabrota(6));
+
+
+
     }
 
 
+
+    public int obtener_aleatorio()
+    {
+        int nro = (int) Math.floor(Math.random()*6+1) ;
+        Log.d("Nro aleatorio","" + nro);
+        return nro;
+    }
 
 
     public void limpiarLetras()
@@ -779,8 +818,13 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "GANASTE Pollito", Toast.LENGTH_LONG).show();
             cantidad_monedas = Integer.parseInt(nroMonedas.getText().toString());
             cantidad_monedas++;
-            nroMonedas.setText(cantidad_monedas + "");
+            Button btnMoneda = (Button) findViewById(R.id.usarMoneda);
 
+            nroMonedas.setText(cantidad_monedas + "");
+            if(cantidad_monedas>0){
+                btnMoneda.setEnabled(true);
+
+            }
             limpiarLetras();            //Limpia las letras de la palabra
             limpiar_cuerpecito();       //Limpia el dibujo del ahorcado
             nroVidas.setText("6");
@@ -1006,14 +1050,17 @@ public class MainActivity extends AppCompatActivity {
 
         TextView nroMonedas = (TextView) findViewById(R.id.textNroMonedas);
         int cantidad_mone = Integer.parseInt(nroMonedas.getText().toString());
+        Button btnMoneda = (Button) findViewById(R.id.usarMoneda);
 
         if (cantidad_mone > 0)
         {
+
             verificarExistenciaLetra(palabra.charAt(ubicacion)+"");
             cantidad_mone = cantidad_mone - 1;
             if(cantidad_mone == 0)
             {
                 //POner el boton USAR MONEDA en enabled = false
+                btnMoneda.setEnabled(false);
             }
             nroMonedas.setText(cantidad_mone + "");
         }
@@ -1031,6 +1078,12 @@ public class MainActivity extends AppCompatActivity {
     public void cambiar_palabra(View v)
     {
         botones_visibles();
+
+        palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
+
+        limpiarLetras();
+        letrasVisibles();
+
     }
 
 
