@@ -1,6 +1,6 @@
 package com.example.leoneldinh10.mi_ahorcado;
 
-
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,25 +8,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.leoneldinh10.mi_ahorcado.Acceso_Base_Datos.BD_OpenHelper;
 
 
 public class MainActivity extends AppCompatActivity {
 
 
-    String palabra = "arquitectura";
-
-
-
-
-    int total_coincidencias_varGlobal=0;
-
-    char palabra_modificada[]=palabra.toCharArray();
-
-    int posicion_primer_letra_vacia;
-
-    BD_OpenHelper base_datos;
+    private String palabra = "";
+    private int total_coincidencias_varGlobal=0;
+    private BD_OpenHelper base_datos;
+    private String probando_palabra_modificada="";
 
 
     @Override
@@ -38,73 +29,75 @@ public class MainActivity extends AppCompatActivity {
 
         palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
 
+        Log.d("Palabra BD -> ", palabra);
+
+        probando_palabra_modificada = palabra;
+
+
         limpiarLetras();
-        letrasVisibles();
+        letrasVisibles(palabra.length());
+
+        Log.d("Palabra Original -> ", palabra);
+        Log.d("Largo palabra orig -> ", palabra.length() + "");
 
 
-
-        /*
-        base_datos.insertarPalabra(2,"cabeza");
-        base_datos.insertarPalabra(3,"mono");
-        base_datos.insertarPalabra(4,"cocodrilo");
-        base_datos.insertarPalabra(5,"elefante");
-        base_datos.insertarPalabra(6,"rinoceronte");
-        */
-
-        // base_datos.insertar_Palabras_en_BD();;
-
-
-
-
-        Log.d("MI BASE DE DATOS ---> ",base_datos.recuperarPalabrota(2));
-        Log.d("MI BASE DE DATOS ---> ",base_datos.recuperarPalabrota(6));
-
-
-
+        verificar_diccionario_letras_BD();
     }
 
 
 
-    public int obtener_aleatorio()
+    public int obtener_aleatorio()          //Es para que genere un numero del 1 al 6 inicialmente. Despues tendra qe hacerse desde el 1 hasta el total de palabras que hay en la Base de Datos.
     {
-        int nro = (int) Math.floor(Math.random()*6+1) ;
+        int nro = (int) Math.floor(Math.random()*20+1) ;
         Log.d("Nro aleatorio","" + nro);
         return nro;
     }
+
+    public void verificar_diccionario_letras_BD()   //Muestra en la consola las palabras de la BD
+    {
+        Log.d("MI BASE DE DATOS","");
+
+        for(int i = 1; i <= 20; i++)        //uso hasta 20 porque se que hay solo 20 palabras en la BD, pero tendria que hacer primero un metodo qe retorne la cantidad de registros palabra en la tabla Palabras y despues usarlo en este ciclo for
+        {
+            Log.d("Palabra Nro.  " + i + " --> ",base_datos.recuperarPalabrota(i));
+        }
+
+        Log.d("TOTAL PALABRAS -> ",base_datos.total_palabras_en_BD() + "");
+
+    }
+
 
 
     public void limpiarLetras()
     {
         TextView letra = (TextView) findViewById(R.id.letra1);
-        letra.setText("____");
+        letra.setText("_");
         TextView letra2 = (TextView) findViewById(R.id.letra2);
-        letra2.setText("_____");
+        letra2.setText("_");
         TextView letra3 = (TextView) findViewById(R.id.letra3);
-        letra3.setText("_____");
+        letra3.setText("_");
         TextView letra4 = (TextView) findViewById(R.id.letra4);
-        letra4.setText("_____");
+        letra4.setText("_");
         TextView letra5 = (TextView) findViewById(R.id.letra5);
-        letra5.setText("_____");
+        letra5.setText("_");
         TextView letra6 = (TextView) findViewById(R.id.letra6);
-        letra6.setText("_____");
+        letra6.setText("_");
         TextView letra7 = (TextView) findViewById(R.id.letra7);
-        letra7.setText("_____");
+        letra7.setText("_");
         TextView letra8 = (TextView) findViewById(R.id.letra8);
-        letra8.setText("_____");
+        letra8.setText("_");
         TextView letra9 = (TextView) findViewById(R.id.letra9);
-        letra9.setText("_____");
+        letra9.setText("_");
         TextView letra10 = (TextView) findViewById(R.id.letra10);
-        letra10.setText("_____");
+        letra10.setText("_");
         TextView letra11 = (TextView) findViewById(R.id.letra11);
-        letra11.setText("_____");
+        letra11.setText("_");
         TextView letra12 = (TextView) findViewById(R.id.letra12);
-        letra12.setText("_____");
+        letra12.setText("_");
         TextView letra13 = (TextView) findViewById(R.id.letra13);
-        letra13.setText("_____");
+        letra13.setText("_");
         TextView letra14 = (TextView) findViewById(R.id.letra14);
-        letra14.setText("_____");
-        //}
-
+        letra14.setText("_");
     }
 
 
@@ -117,21 +110,25 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void letrasVisibles()
+    public void letrasVisibles(int largo_palabra)
     {
-        int cant_letras = cantidadLetras(palabra);
+        int cant_letras_viejas = cantidadLetras(palabra);
 
+        Log.d("Largo letras viejas -> " , cant_letras_viejas+"");
+
+        int cant_letras = largo_palabra;
 
       switch (cant_letras)
         {
             case 3:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
-                letra.setCursorVisible(true);
+                letra.setVisibility(View.VISIBLE);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
-                letra2.setCursorVisible(true);
+                letra2.setVisibility(View.VISIBLE);
                 TextView letra3 = (TextView) findViewById(R.id.letra3);
-                letra3.setCursorVisible(true);
+                letra3.setVisibility(View.VISIBLE);
                 TextView letra4 = (TextView) findViewById(R.id.letra4);
                 letra4.setVisibility(View.INVISIBLE);
                 TextView letra5 = (TextView) findViewById(R.id.letra5);
@@ -159,14 +156,15 @@ public class MainActivity extends AppCompatActivity {
 
             case 4:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
-                letra.setCursorVisible(true);
+                letra.setVisibility(View.VISIBLE);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
-                letra2.setCursorVisible(true);
+                letra2.setVisibility(View.VISIBLE);
                 TextView letra3 = (TextView) findViewById(R.id.letra3);
-                letra3.setCursorVisible(true);
+                letra3.setVisibility(View.VISIBLE);
                 TextView letra4 = (TextView) findViewById(R.id.letra4);
-                letra4.setCursorVisible(true);
+                letra4.setVisibility(View.VISIBLE);
                 TextView letra5 = (TextView) findViewById(R.id.letra5);
                 letra5.setVisibility(View.INVISIBLE);
                 TextView letra6 = (TextView) findViewById(R.id.letra6);
@@ -192,16 +190,17 @@ public class MainActivity extends AppCompatActivity {
 
             case 5:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
-                letra.setCursorVisible(true);
+                letra.setVisibility(View.VISIBLE);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
-                letra2.setCursorVisible(true);
+                letra2.setVisibility(View.VISIBLE);
                 TextView letra3 = (TextView) findViewById(R.id.letra3);
-                letra3.setCursorVisible(true);
+                letra3.setVisibility(View.VISIBLE);
                 TextView letra4 = (TextView) findViewById(R.id.letra4);
-                letra4.setCursorVisible(true);
+                letra4.setVisibility(View.VISIBLE);
                 TextView letra5 = (TextView) findViewById(R.id.letra5);
-                letra5.setCursorVisible(true);
+                letra5.setVisibility(View.VISIBLE);
                 TextView letra6 = (TextView) findViewById(R.id.letra6);
                 letra6.setVisibility(View.INVISIBLE);
                 TextView letra7 = (TextView) findViewById(R.id.letra7);
@@ -226,18 +225,19 @@ public class MainActivity extends AppCompatActivity {
 
             case 6:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
-                letra.setCursorVisible(true);
+                letra.setVisibility(View.VISIBLE);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
-                letra2.setCursorVisible(true);
+                letra2.setVisibility(View.VISIBLE);
                 TextView letra3 = (TextView) findViewById(R.id.letra3);
-                letra3.setCursorVisible(true);
+                letra3.setVisibility(View.VISIBLE);
                 TextView letra4 = (TextView) findViewById(R.id.letra4);
-                letra4.setCursorVisible(true);
+                letra4.setVisibility(View.VISIBLE);
                 TextView letra5 = (TextView) findViewById(R.id.letra5);
-                letra5.setCursorVisible(true);
+                letra5.setVisibility(View.VISIBLE);
                 TextView letra6 = (TextView) findViewById(R.id.letra6);
-                letra6.setCursorVisible(true);
+                letra6.setVisibility(View.VISIBLE);
                 TextView letra7 = (TextView) findViewById(R.id.letra7);
                 letra7.setVisibility(View.INVISIBLE);
                 TextView letra8 = (TextView) findViewById(R.id.letra8);
@@ -261,20 +261,21 @@ public class MainActivity extends AppCompatActivity {
 
             case 7:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
-                letra.setCursorVisible(true);
+                letra.setVisibility(View.VISIBLE);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
-                letra2.setCursorVisible(true);
+                letra2.setVisibility(View.VISIBLE);
                 TextView letra3 = (TextView) findViewById(R.id.letra3);
-                letra3.setCursorVisible(true);
+                letra3.setVisibility(View.VISIBLE);
                 TextView letra4 = (TextView) findViewById(R.id.letra4);
-                letra4.setCursorVisible(true);
+                letra4.setVisibility(View.VISIBLE);
                 TextView letra5 = (TextView) findViewById(R.id.letra5);
-                letra5.setCursorVisible(true);
+                letra5.setVisibility(View.VISIBLE);
                 TextView letra6 = (TextView) findViewById(R.id.letra6);
-                letra6.setCursorVisible(true);
+                letra6.setVisibility(View.VISIBLE);
                 TextView letra7 = (TextView) findViewById(R.id.letra7);
-                letra7.setCursorVisible(true);
+                letra7.setVisibility(View.VISIBLE);
                 TextView letra8 = (TextView) findViewById(R.id.letra8);
                 letra8.setVisibility(View.INVISIBLE);
                 TextView letra9 = (TextView) findViewById(R.id.letra9);
@@ -295,20 +296,21 @@ public class MainActivity extends AppCompatActivity {
 
             case 8:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
-                letra.setCursorVisible(true);
+                letra.setVisibility(View.VISIBLE);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
-                letra2.setCursorVisible(true);
+                letra2.setVisibility(View.VISIBLE);
                 TextView letra3 = (TextView) findViewById(R.id.letra3);
-                letra3.setCursorVisible(true);
+                letra3.setVisibility(View.VISIBLE);
                 TextView letra4 = (TextView) findViewById(R.id.letra4);
-                letra4.setCursorVisible(true);
+                letra4.setVisibility(View.VISIBLE);
                 TextView letra5 = (TextView) findViewById(R.id.letra5);
-                letra5.setCursorVisible(true);
+                letra5.setVisibility(View.VISIBLE);
                 TextView letra6 = (TextView) findViewById(R.id.letra6);
-                letra6.setCursorVisible(true);
+                letra6.setVisibility(View.VISIBLE);
                 TextView letra7 = (TextView) findViewById(R.id.letra7);
-                letra7.setCursorVisible(true);
+                letra7.setVisibility(View.VISIBLE);
                 TextView letra8 = (TextView) findViewById(R.id.letra8);
                 letra8.setVisibility(View.VISIBLE);
                 TextView letra9 = (TextView) findViewById(R.id.letra9);
@@ -326,23 +328,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
 
-
             case 9:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
-                letra.setCursorVisible(true);
+                letra.setVisibility(View.VISIBLE);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
-                letra2.setCursorVisible(true);
+                letra2.setVisibility(View.VISIBLE);
                 TextView letra3 = (TextView) findViewById(R.id.letra3);
-                letra3.setCursorVisible(true);
+                letra3.setVisibility(View.VISIBLE);
                 TextView letra4 = (TextView) findViewById(R.id.letra4);
-                letra4.setCursorVisible(true);
+                letra4.setVisibility(View.VISIBLE);
                 TextView letra5 = (TextView) findViewById(R.id.letra5);
-                letra5.setCursorVisible(true);
+                letra5.setVisibility(View.VISIBLE);
                 TextView letra6 = (TextView) findViewById(R.id.letra6);
-                letra6.setCursorVisible(true);
+                letra6.setVisibility(View.VISIBLE);
                 TextView letra7 = (TextView) findViewById(R.id.letra7);
-                letra7.setCursorVisible(true);
+                letra7.setVisibility(View.VISIBLE);
                 TextView letra8 = (TextView) findViewById(R.id.letra8);
                 letra8.setVisibility(View.VISIBLE);
                 TextView letra9 = (TextView) findViewById(R.id.letra9);
@@ -360,23 +362,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
 
-
             case 10:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
-                letra.setCursorVisible(true);
+                letra.setVisibility(View.VISIBLE);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
-                letra2.setCursorVisible(true);
+                letra2.setVisibility(View.VISIBLE);
                 TextView letra3 = (TextView) findViewById(R.id.letra3);
-                letra3.setCursorVisible(true);
+                letra3.setVisibility(View.VISIBLE);
                 TextView letra4 = (TextView) findViewById(R.id.letra4);
-                letra4.setCursorVisible(true);
+                letra4.setVisibility(View.VISIBLE);
                 TextView letra5 = (TextView) findViewById(R.id.letra5);
-                letra5.setCursorVisible(true);
+                letra5.setVisibility(View.VISIBLE);
                 TextView letra6 = (TextView) findViewById(R.id.letra6);
-                letra6.setCursorVisible(true);
+                letra6.setVisibility(View.VISIBLE);
                 TextView letra7 = (TextView) findViewById(R.id.letra7);
-                letra7.setCursorVisible(true);
+                letra7.setVisibility(View.VISIBLE);
                 TextView letra8 = (TextView) findViewById(R.id.letra8);
                 letra8.setVisibility(View.VISIBLE);
                 TextView letra9 = (TextView) findViewById(R.id.letra9);
@@ -394,23 +396,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
 
-
             case 11:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
-                letra.setCursorVisible(true);
+                letra.setVisibility(View.VISIBLE);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
-                letra2.setCursorVisible(true);
+                letra2.setVisibility(View.VISIBLE);
                 TextView letra3 = (TextView) findViewById(R.id.letra3);
-                letra3.setCursorVisible(true);
+                letra3.setVisibility(View.VISIBLE);
                 TextView letra4 = (TextView) findViewById(R.id.letra4);
-                letra4.setCursorVisible(true);
+                letra4.setVisibility(View.VISIBLE);
                 TextView letra5 = (TextView) findViewById(R.id.letra5);
-                letra5.setCursorVisible(true);
+                letra5.setVisibility(View.VISIBLE);
                 TextView letra6 = (TextView) findViewById(R.id.letra6);
-                letra6.setCursorVisible(true);
+                letra6.setVisibility(View.VISIBLE);
                 TextView letra7 = (TextView) findViewById(R.id.letra7);
-                letra7.setCursorVisible(true);
+                letra7.setVisibility(View.VISIBLE);
                 TextView letra8 = (TextView) findViewById(R.id.letra8);
                 letra8.setVisibility(View.VISIBLE);
                 TextView letra9 = (TextView) findViewById(R.id.letra9);
@@ -428,23 +430,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
 
-
             case 12:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
-                letra.setCursorVisible(true);
+                letra.setVisibility(View.VISIBLE);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
-                letra2.setCursorVisible(true);
+                letra2.setVisibility(View.VISIBLE);
                 TextView letra3 = (TextView) findViewById(R.id.letra3);
-                letra3.setCursorVisible(true);
+                letra3.setVisibility(View.VISIBLE);
                 TextView letra4 = (TextView) findViewById(R.id.letra4);
-                letra4.setCursorVisible(true);
+                letra4.setVisibility(View.VISIBLE);
                 TextView letra5 = (TextView) findViewById(R.id.letra5);
-                letra5.setCursorVisible(true);
+                letra5.setVisibility(View.VISIBLE);
                 TextView letra6 = (TextView) findViewById(R.id.letra6);
-                letra6.setCursorVisible(true);
+                letra6.setVisibility(View.VISIBLE);
                 TextView letra7 = (TextView) findViewById(R.id.letra7);
-                letra7.setCursorVisible(true);
+                letra7.setVisibility(View.VISIBLE);
                 TextView letra8 = (TextView) findViewById(R.id.letra8);
                 letra8.setVisibility(View.VISIBLE);
                 TextView letra9 = (TextView) findViewById(R.id.letra9);
@@ -462,9 +464,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
 
-
             case 13:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
                 letra.setCursorVisible(true);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
@@ -496,9 +498,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
 
-
             case 14:
             {
+                Log.d("Case -> ", cant_letras +"");
                 TextView letra = (TextView) findViewById(R.id.letra1);
                 letra.setCursorVisible(true);
                 TextView letra2 = (TextView) findViewById(R.id.letra2);
@@ -532,6 +534,7 @@ public class MainActivity extends AppCompatActivity {
 
             default:
             {
+                Log.d("Entro en Case Default", "TODO ROTO!! LetrasVisibles()");
                 break;
             }
 
@@ -629,151 +632,31 @@ public class MainActivity extends AppCompatActivity {
         return id;
     }
 
-
-
+/*
     public void existe_A(View a)
     {
         verificarExistenciaLetra("a");
         a.setVisibility(View.INVISIBLE);
     }
-    public void existe_B(View b)
-    {
-        verificarExistenciaLetra("b");
-        b.setVisibility(View.INVISIBLE);
-    }
-    public void existe_C(View c)
-    {
-        verificarExistenciaLetra("c");
-        c.setVisibility(View.INVISIBLE);
-    }
-    public void existe_D(View d)
-    {
-        verificarExistenciaLetra("d");
-        d.setVisibility(View.INVISIBLE);
-    }
-    public void existe_E(View e)
-    {
-        verificarExistenciaLetra("e");
-        e.setVisibility(View.INVISIBLE);
-    }
-    public void existe_F(View f)
-    {
-        verificarExistenciaLetra("f");
-        f.setVisibility(View.INVISIBLE);
-    }
-    public void existe_G(View g)
-    {
-        verificarExistenciaLetra("g");
-        g.setVisibility(View.INVISIBLE);
-    }
-    public void existe_H(View h)
-    {
-        verificarExistenciaLetra("h");
-        h.setVisibility(View.INVISIBLE);
-    }
-    public void existe_I(View i)
-    {
-        verificarExistenciaLetra("i");
-        i.setVisibility(View.INVISIBLE);
-    }
-    public void existe_J(View j)
-    {
-        verificarExistenciaLetra("j");
-        j.setVisibility(View.INVISIBLE);
-    }
-    public void existe_K(View k)
-    {
-        verificarExistenciaLetra("k");
-        k.setVisibility(View.INVISIBLE);
-    }
-    public void existe_L(View l)
-    {
-        verificarExistenciaLetra("l");
-        l.setVisibility(View.INVISIBLE);
-    }
-    public void existe_M(View m)
-    {
-        verificarExistenciaLetra("m");
-        m.setVisibility(View.INVISIBLE);
-    }
-    public void existe_N(View n)
-    {
-        verificarExistenciaLetra("n");
-        n.setVisibility(View.INVISIBLE);
-    }
-    public void existe_Enie(View n)
-    {
-        verificarExistenciaLetra("ñ");
-        n.setVisibility(View.INVISIBLE);
-    }
-    public void existe_O(View o)
-    {
-        verificarExistenciaLetra("o");
-        o.setVisibility(View.INVISIBLE);
-    }
-    public void existe_P(View p)
-    {
-        verificarExistenciaLetra("p");
-        p.setVisibility(View.INVISIBLE);
-    }
-    public void existe_Q(View q)
-    {
-        verificarExistenciaLetra("q");
-        q.setVisibility(View.INVISIBLE);
-    }
-    public void existe_R(View r)
-    {
-        verificarExistenciaLetra("r");
-        r.setVisibility(View.INVISIBLE);
-    }
-    public void existe_S(View s)
-    {
-        verificarExistenciaLetra("s");
-        s.setVisibility(View.INVISIBLE);
-    }
-    public void existe_T(View t)
-    {
-        verificarExistenciaLetra("t");
-        t.setVisibility(View.INVISIBLE);
-    }
-    public void existe_U(View u)
-    {
-        verificarExistenciaLetra("u");
-        u.setVisibility(View.INVISIBLE);
-    }
-    public void existe_V(View v)
-    {
-        verificarExistenciaLetra("v");
-        v.setVisibility(View.INVISIBLE);
-    }
-    public void existe_W(View w)
-    {
-        verificarExistenciaLetra("w");
-        w.setVisibility(View.INVISIBLE);
-    }
-    public void existe_X(View x)
-    {
-        verificarExistenciaLetra("x");
-        x.setVisibility(View.INVISIBLE);
-    }
-    public void existe_Y(View y)
-    {
-        verificarExistenciaLetra("Y");
-        y.setVisibility(View.INVISIBLE);
-    }
-    public void existe_Z(View z)
-    {
-        verificarExistenciaLetra("Z");
-        z.setVisibility(View.INVISIBLE);
-    }
+*/
 
 
+    public void exxxxiste(View aa)
+    {
+        Button btn = (Button) aa;
+        aa.setVisibility(View.INVISIBLE);
+        String letra = btn.getText().toString();
+        letra = letra.toLowerCase();
+        verificarExistenciaLetra(letra);
+    }
 
 
     public void verificarExistenciaLetra(String v)
     {
         char letra_caracter;
         TextView letra_view;
+
+        Log.d("Parametro que llega -> ", v.charAt(0) +"");
 
         int alguna_coincidencia = 0;
         int cantidad_vidas = 0;
@@ -790,27 +673,34 @@ public class MainActivity extends AppCompatActivity {
         TextView nroMonedas = (TextView) findViewById(R.id.textNroMonedas);
 
 
+
         for (int i = 0; i < cantidadLetras(palabra); i++)
         {
             letra_caracter = palabra.charAt(i);
 
             if ( letra_caracter == v.charAt(0) )
             {
+
                 letra_view = (TextView) findViewById(retornaID_letra(i+1));
                 letra_view.setText(letra_caracter+ "");
                 alguna_coincidencia++;
-
                 total_coincidencias_varGlobal++;
 
-               palabra_modificada[i] = '_';
 
-            }
+                Log.d("Palabra ---> ",palabra);
+                Log.d("Btn letra apretada --> ",v);
+                Log.d("Letra posicion i = " + i ,palabra);
+                Log.d("Nro coincidencias " + letra_caracter , total_coincidencias_varGlobal + "");
 
 
+               probando_palabra_modificada = probando_palabra_modificada.replace(probando_palabra_modificada.charAt(i),'_');
+               Log.d("Palabra modi 2 -> ",probando_palabra_modificada);
 
-
+            }  //FIN if
 
         }   //FIN ciclo for
+
+
 
         if(total_coincidencias_varGlobal == cantidadLetras(palabra))
         {
@@ -821,18 +711,22 @@ public class MainActivity extends AppCompatActivity {
             Button btnMoneda = (Button) findViewById(R.id.usarMoneda);
 
             nroMonedas.setText(cantidad_monedas + "");
-            if(cantidad_monedas>0){
-                btnMoneda.setEnabled(true);
 
+            if(cantidad_monedas>0)
+            {
+                btnMoneda.setEnabled(true);
             }
-            limpiarLetras();            //Limpia las letras de la palabra
-            limpiar_cuerpecito();       //Limpia el dibujo del ahorcado
+
+
+
             nroVidas.setText("6");
-            botones_visibles();      //Botones apretados de abecedario pasan a ser visibles
             total_coincidencias_varGlobal = 0;      //Se inicializa de nuevo la variable global creada
 
+            probando_palabra_modificada = palabra;
 
-            palabra_modificada = palabra.toCharArray(); //NUeva linea agregada en casa del Fede -> Porque una vez qe gana, no funciona bien el USAR MONEDA
+            Button btn_cambiar = (Button) findViewById(R.id.cambiarPalabra);
+            btn_cambiar.callOnClick();
+            btn_cambiar.setEnabled(true);
 
         }
 
@@ -890,22 +784,25 @@ public class MainActivity extends AppCompatActivity {
                     corto_pieDer = (TextView) findViewById(R.id.cubo48);
                     corto_pieDer.setText("\\");
 
-                    mensajePerdiste();
+                    Toast.makeText(this, "Perdiste Pollito", Toast.LENGTH_LONG).show();
 
                     nroVidas.setText("0");
-                    limpiar_cuerpecito();
-                    limpiarLetras();
-
+                    //hacer un ciclo que espere y te muestre que perdiste y que tu cantidad de vidas es 0
                     nroVidas.setText("6");
 
                     total_coincidencias_varGlobal = 0;  //Inicializo nuevamente la variable global
 
-                    botones_visibles();
+                    Button btn_cambiar = (Button) findViewById(R.id.cambiarPalabra);
+                    btn_cambiar.setEnabled(true);
+                    btn_cambiar.callOnClick();          //Cambia de palabra, y setea todos los valores de botones, letras y vidas
+
+
+                    Log.d("Palabra Original -> " , palabra);
+                    Log.d("Palabra Modifi 2 -> ", probando_palabra_modificada);
 
                     break;
 
-
-                }   //Fin Case
+                }   //Fin Case 0
 
 
             }   //Fin Switch
@@ -922,11 +819,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void botones_visibles()
     {
-    Button btn_a = (Button) findViewById(R.id.btnA);
-    btn_a.setVisibility(View.VISIBLE);
+        Button btn_a = (Button) findViewById(R.id.btnA);
+        btn_a.setVisibility(View.VISIBLE);
 
-    Button btn_b = (Button) findViewById(R.id.btnB);
-    btn_b.setVisibility(View.VISIBLE);
+        Button btn_b = (Button) findViewById(R.id.btnB);
+        btn_b.setVisibility(View.VISIBLE);
 
         Button btn_c = (Button) findViewById(R.id.btnC);
         btn_c.setVisibility(View.VISIBLE);
@@ -978,7 +875,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button btn_r = (Button) findViewById(R.id.btnR);
         btn_r.setVisibility(View.VISIBLE);
-//esto es un comentario
+
         Button btn_s = (Button) findViewById(R.id.btnS);
         btn_s.setVisibility(View.VISIBLE);
 
@@ -1005,15 +902,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    public void mensajePerdiste()
-    {
-        Toast.makeText(this, "Perdiste Pollito", Toast.LENGTH_LONG).show();
-
-        palabra_modificada = palabra.toCharArray();  // Agregada linea en la casa del FEDE 21-4-2017
-    }
-
-
     public void limpiar_cuerpecito()
     {
         TextView corto_cabeza = (TextView) findViewById(R.id.cubo17);
@@ -1036,13 +924,19 @@ public class MainActivity extends AppCompatActivity {
         corto_pieDer.setText("");
     }
 
+
+
     public void usar_moneda(View v)
     {
         int ubicacion = 0;
 
+        Log.d("Palabra Original -> ",palabra);
+        Log.d("Palabra modifi 2 -> ",probando_palabra_modificada);
+
+
         for (int i = 0; i < palabra.length();i++)
         {
-            if(palabra_modificada[i] != '_')
+            if(probando_palabra_modificada.charAt(i) != '_')
             {
                ubicacion= i;
             }
@@ -1054,12 +948,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (cantidad_mone > 0)
         {
-
             verificarExistenciaLetra(palabra.charAt(ubicacion)+"");
             cantidad_mone = cantidad_mone - 1;
             if(cantidad_mone == 0)
             {
-                //POner el boton USAR MONEDA en enabled = false
+                //Poner el boton USAR MONEDA en enabled = false
                 btnMoneda.setEnabled(false);
             }
             nroMonedas.setText(cantidad_mone + "");
@@ -1073,36 +966,74 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     public void cambiar_palabra(View v)
     {
-        botones_visibles();
-
-        palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
-
-        limpiarLetras();
-        letrasVisibles();
-
+        Hilo_Clase hilito = new Hilo_Clase();
+        hilito.execute();
     }
 
 
 
 
-    /*
-    CLASE DE ADS 21/04/2017
-    Vimos los Unit Test     --- > Se hace sobre la minima unidad de testing, es decir sobre los metodos, y lo que se debe hacer es eliminar
-                                todas las dependencias del metodos a los metodos externos al de testing
-                                El Profe uso la libreria MOQ para hacer los Unit Test en .NET
-    Va atener cuatro partes :
-                        Arrange - >
-                        Act     - >
-                        Assert  - >
-
-     */
+    private class Hilo_Clase extends AsyncTask<Void, Integer, Void>
+    {
 
 
+        @Override
+        protected void onPreExecute()
+        {
 
+            palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
+            total_coincidencias_varGlobal = 0;
+
+            //HAY UN PROBLEMA --------------------> Al cambiar la palabra a adivinar, muestra mal las letras visibles cuando tocan palabras largas, mas de cinco letras     --> Resuelto
+            // SOLUCION --------------------------> En el metodo letrasVisibles() use dos metodos diferentes de visibilidad de TextView, pero al cambiar eso y usar solo "letra.setVisibility(View.INVISIBLE)" funciona correctamente!!! ---> Dia 03/05/2017
+            letrasVisibles(palabra.length());
+
+            probando_palabra_modificada = palabra;
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+
+            if(!isCancelled())
+                publishProgress(1);
+
+
+            return null;
+        }
+
+        @Override
+        protected void onCancelled() { super.onCancelled(); }
+
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+
+            TextView nroVidas = (TextView) findViewById(R.id.textNroVidas);
+            nroVidas.setText("6");
+
+            limpiarLetras();
+            letrasVisibles(palabra.length());
+            botones_visibles();
+            limpiar_cuerpecito();
+
+        }
+
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+
+            Log.d("Palabra Original -> ", palabra);
+            Log.d("Largo palabra -> ", palabra.length() + "");
+            letrasVisibles(palabra.length());
+        }
+
+    }       // FIN de Clase AsyncTask
 
 
 

@@ -3,6 +3,7 @@ package com.example.leoneldinh10.mi_ahorcado.Acceso_Base_Datos;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -57,19 +58,6 @@ public class BD_OpenHelper extends SQLiteOpenHelper {
     }
 
 
-    public void insertar_Palabras_en_BD()
-    {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("id",39);
-        values.put("nombre", "casa");
-        db.insert("Palabras", null, values);
-
-      //  db.execSQL("INSERT INTO Palabras(id,nombre) VALUES (122,'papilo')");
-
-        db.close();
-    }
-
 
     public String recuperarPalabrota(int id)
     {
@@ -92,71 +80,73 @@ public class BD_OpenHelper extends SQLiteOpenHelper {
     }
 
 
+    public int total_palabras_en_BD()
+    {
+        int total=0;
+        SQLiteDatabase db = getReadableDatabase();
+        String palabris="No se encontro nada en BD";
+        String[] valores_recuperar = {"id"};
+        Cursor c = db.query("Palabras", valores_recuperar, null,
+                null, null, null, null,null);
+
+        if(c != null)
+        {
+
+            if (c.moveToFirst())
+            {
+
+                do
+                {
+                   total++;
+
+                } while(c.moveToNext());
+            }
+
+
+        }
+
+        db.close();
+        c.close();
+
+        return  total;
+    }
+
+
 
     /*
-
-
-
-
-
-
-    public String get_palabra_Query(String id) {
-
-        String palabrar="";
-        Cursor c = getReadableDatabase().query(                                 //   QUERY
-                "Palabras",
-                null,
-                "id" + " LIKE ?",
-                new String[]{id},
-                null,
-                null,
-                null);
-
-        if (c.moveToFirst()) {
-            do
-            {
-                palabrar += c.getString(1) + "  -  ";
-
-            } while(c.moveToNext());
-        }
-        else
-        {
-            palabrar = "NADA";
-        }
-
-        return palabrar;
-    }
-
-
-
-
-
-    public String get_Palabra_RawQuery(String id)
+    public String[] get_total_palabras_BD()
     {
-        String retorno="";
-        Cursor c;
-        SQLiteDatabase db = getWritableDatabase();
-        String query = "Select * from Palabras WHERE id=?";
-        c =  db.rawQuery(query, new String[]{"id"});                         //  RAWQUERY
+        int secuencia=0;
+        SQLiteDatabase db = getReadableDatabase();
+        String[] palabris = new String[total_palabras_en_BD()];
+        String[] valores_recuperar = {"nombre"};
+        Cursor c = db.query("Palabras", valores_recuperar, null,
+                null, null, null, null,null);
 
-        if (c.moveToFirst()) {
-            do
-            {
-                retorno += c.getString(1) + "  -  ";
-
-            } while(c.moveToNext());
-        }
-        else
+        if(c != null)
         {
-            retorno = "NADA";
+
+            if (c.moveToFirst())
+            {
+
+                do
+                {
+                   secuencia++;
+                  // palabris[secuencia] = c.getString(0);
+                    palabris[secuencia] = secuencia + "";
+
+                } while(c.moveToNext());
+            }
+
+
         }
 
+        db.close();
+        c.close();
 
-        return  retorno;
+
+        return palabris;
     }
-
-
-*/
-
+    */
 
 }
