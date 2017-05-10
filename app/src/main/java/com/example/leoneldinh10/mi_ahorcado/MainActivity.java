@@ -11,6 +11,21 @@ import android.widget.Toast;
 import com.example.leoneldinh10.mi_ahorcado.Acceso_Base_Datos.BD_OpenHelper;
 
 
+
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+
+
+
+
+
+
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -20,12 +35,46 @@ public class MainActivity extends AppCompatActivity {
     private String probando_palabra_modificada="";
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         base_datos = new BD_OpenHelper(getApplicationContext());
+
+/*
+        - ESTAS LINEAS HACEN FALTA DESCOMENTARLAS LA PRIMERA VEZ QUE SE EJECUTA EL PROYECTO, PARA INSERTAR PALABRAS EN LA BASE DE DATOS
+        - SI O SI TIENEN QUE EJECUTARSE UNA UNICA VEZ, Y SACARLAS.
+        - SI SE EJECUTAN MAS DE UNA VEZ, SE INSERTARAN PALABRAS CON "ID" RETIDOS, Y SALTARA ERROR EN EL PROGRAMA CUANDO TRATE DE TRAER UNA UNICA PALABRA EN EL METODO "recuperarPalabreta(nro_id)"
+
+
+        base_datos.insertarPalabra(1,"casa");
+        base_datos.insertarPalabra(2,"perro");
+        base_datos.insertarPalabra(3,"gato");
+        base_datos.insertarPalabra(4,"mono");
+        base_datos.insertarPalabra(5,"computadora");
+        base_datos.insertarPalabra(6,"elefante");
+        base_datos.insertarPalabra(7,"rinoceronte");
+        base_datos.insertarPalabra(8,"teclado");
+        base_datos.insertarPalabra(9,"celular");
+        base_datos.insertarPalabra(10,"monitor");
+        base_datos.insertarPalabra(11,"raton");
+        base_datos.insertarPalabra(12,"jirafa");
+        base_datos.insertarPalabra(13,"leon");
+        base_datos.insertarPalabra(14,"tigre");
+        base_datos.insertarPalabra(15,"virus");
+        base_datos.insertarPalabra(16,"gusano");
+        base_datos.insertarPalabra(17,"arquitectura");
+        base_datos.insertarPalabra(18,"antivirus");
+        base_datos.insertarPalabra(19,"loro");
+        base_datos.insertarPalabra(20,"moneda");
+
+*/
+
+
+
 
         palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
 
@@ -632,14 +681,6 @@ public class MainActivity extends AppCompatActivity {
         return id;
     }
 
-/*
-    public void existe_A(View a)
-    {
-        verificarExistenciaLetra("a");
-        a.setVisibility(View.INVISIBLE);
-    }
-*/
-
 
     public void exxxxiste(View aa)
     {
@@ -705,7 +746,7 @@ public class MainActivity extends AppCompatActivity {
         if(total_coincidencias_varGlobal == cantidadLetras(palabra))
         {
 
-            Toast.makeText(this, "GANASTE Pollito", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "GANASTE!!!", Toast.LENGTH_LONG).show();
             cantidad_monedas = Integer.parseInt(nroMonedas.getText().toString());
             cantidad_monedas++;
             Button btnMoneda = (Button) findViewById(R.id.usarMoneda);
@@ -784,7 +825,7 @@ public class MainActivity extends AppCompatActivity {
                     corto_pieDer = (TextView) findViewById(R.id.cubo48);
                     corto_pieDer.setText("\\");
 
-                    Toast.makeText(this, "Perdiste Pollito", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Perdiste!!!", Toast.LENGTH_LONG).show();
 
                     nroVidas.setText("0");
                     //hacer un ciclo que espere y te muestre que perdiste y que tu cantidad de vidas es 0
@@ -959,7 +1000,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            Toast.makeText(this, "NO tenes monedas Pollito", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "NO tenes mas monedas!!!", Toast.LENGTH_LONG).show();
         }
 
 
@@ -977,20 +1018,20 @@ public class MainActivity extends AppCompatActivity {
 
     private class Hilo_Clase extends AsyncTask<Void, Integer, Void>
     {
-
+      private String pal="";
 
         @Override
         protected void onPreExecute()
         {
 
-            palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
-            total_coincidencias_varGlobal = 0;
+            /*
+                - ESTAS LINEAS IBAN CUANDO SE OBTENIAN PALABRAS DE LA BASE DE DATOS SQLITE LOCAL DEL CELULAR EMULADOR
 
-            //HAY UN PROBLEMA --------------------> Al cambiar la palabra a adivinar, muestra mal las letras visibles cuando tocan palabras largas, mas de cinco letras     --> Resuelto
-            // SOLUCION --------------------------> En el metodo letrasVisibles() use dos metodos diferentes de visibilidad de TextView, pero al cambiar eso y usar solo "letra.setVisibility(View.INVISIBLE)" funciona correctamente!!! ---> Dia 03/05/2017
-            letrasVisibles(palabra.length());
-
-            probando_palabra_modificada = palabra;
+                palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
+                total_coincidencias_varGlobal = 0;
+                letrasVisibles(palabra.length());                                       //ESTO SOLUCIONA EL PROBLEMA DE QUE NO SE VISIBILIZABAN LAS LETRAS DE ALGUNAS PALABRAS LARGAS
+                probando_palabra_modificada = palabra;
+            */
         }
 
 
@@ -998,9 +1039,46 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params)
         {
 
-            if(!isCancelled())
-                publishProgress(1);
+            //Agregado para obtener la palabra del Servicio Rest
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet del = new HttpGet("http://serviciopalabras.somee.com/Api/Palabras");
+            //HttpGet del = new HttpGet("http://192.168.1.6:10518/Api/Palabras");               //ESTO ES PARA OBTENER PALABRAS DEL SERVICIO REST LOCAL, HECHO EN VISUAL STUDIO
+            del.setHeader("content-type", "application/json");
+            //Fin de lo agregado para el Servicio Rest
 
+
+            try
+            {
+                //Agregado para obtener la palabra del Servicio Rest
+                HttpResponse resp = httpClient.execute(del);
+                String respStr = EntityUtils.toString(resp.getEntity());
+                JSONObject respJSON = new JSONObject(respStr);
+                pal = respJSON.getString("palabra");
+                //Fin de lo agregado para el servicio Rest
+
+
+                //Esta linea es nueva, iguala a la variable global "palabra" con la palabra "pal" que es traida del Servicio Rest
+                palabra = pal;
+
+
+                //Estas lineas ya estaban
+                total_coincidencias_varGlobal = 0;
+                probando_palabra_modificada = palabra;
+
+
+
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+
+            }
+
+
+
+            //Esto ya estaba
+            if(!isCancelled())
+            {    publishProgress(1);}
 
             return null;
         }
@@ -1013,9 +1091,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
 
+            //Todo esto ya estaba
             TextView nroVidas = (TextView) findViewById(R.id.textNroVidas);
             nroVidas.setText("6");
-
             limpiarLetras();
             letrasVisibles(palabra.length());
             botones_visibles();
@@ -1028,8 +1106,12 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
 
+
             Log.d("Palabra Original -> ", palabra);
             Log.d("Largo palabra -> ", palabra.length() + "");
+            Log.d("Palabra de Servicio Web",pal);
+
+
             letrasVisibles(palabra.length());
         }
 
