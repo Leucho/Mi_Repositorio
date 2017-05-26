@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -1122,11 +1123,56 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
+
+
+
+
+
+
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="20dp">
+
+
+
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="37dp"
+                    android:layout_height="wrap_content"
+                    android:text="Nivel: " />
+                <TextView
+                    android:id="@+id/textNivel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Facil" />
+
+
+
+
+
+
             </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
             <LinearLayout
@@ -1240,12 +1286,94 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="30dp">
 
+
+
+                <ImageView
+                    android:id="@+id/estrella1"
+                    android:layout_width="25dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    app:srcCompat="@android:drawable/btn_star_big_on" />
+
+                <ImageView
+                    android:id="@+id/estrella2"
+                    android:layout_width="25dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    app:srcCompat="@android:drawable/btn_star_big_on" />
+
+                <ImageView
+                    android:id="@+id/estrella3"
+                    android:layout_width="25dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    app:srcCompat="@android:drawable/btn_star_big_on" />
+
+                <TextView
+                    android:id="@+id/textViewEstrellas"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:text="0/3"/>
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="55dp"
+                    android:layout_height="wrap_content"
+                    android:text="estrellas" />
+
+
+
+
+
             </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

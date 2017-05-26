@@ -4,13 +4,15 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.leoneldinh10.mi_ahorcado.Acceso_Base_Datos.BD_OpenHelper;
-
-
+import com.example.leoneldinh10.mi_ahorcado.Acceso_Base_Datos.Palabra;
 
 
 import org.apache.http.HttpResponse;
@@ -18,12 +20,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-
-
-
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +34,37 @@ public class MainActivity extends AppCompatActivity {
     private int total_coincidencias_varGlobal=0;
     private BD_OpenHelper base_datos;
     private String probando_palabra_modificada="";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private int nivel = 1;          //Habra tres niveles de DIFICULTAD en el Juego -> Facil, Medio y Dificil
+    private int puntos = 0;         //Estos sera lo que llevara la cuenta de las estrellas -> al llegar a tres, se pasa de nivel
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -78,6 +110,31 @@ public class MainActivity extends AppCompatActivity {
 
         palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
 
+
+
+
+
+
+
+        //Esto lo agregue porque la primera vez que cargaba la app, se mostraba una palabra cualquiera de la BD, sin importar el nivel en el cual se encontraba el jugador!
+        Hilo_Clase hilito = new Hilo_Clase();
+        hilito.execute();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         Log.d("Palabra BD -> ", palabra);
 
         probando_palabra_modificada = palabra;
@@ -95,6 +152,54 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+/*
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_principal, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.porBD:
+            {
+                Toast.makeText(this, "Hola, esto es por BD", Toast.LENGTH_SHORT ).show();
+
+                return true;
+            }
+
+            case R.id.porREST:
+            {
+                Toast.makeText(this, "Hola, esto es por REST", Toast.LENGTH_LONG ).show();
+
+                return true;
+            }
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public int obtener_aleatorio()          //Es para que genere un numero del 1 al 6 inicialmente. Despues tendra qe hacerse desde el 1 hasta el total de palabras que hay en la Base de Datos.
     {
         int nro = (int) Math.floor(Math.random()*20+1) ;
@@ -108,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
         for(int i = 1; i <= 20; i++)        //uso hasta 20 porque se que hay solo 20 palabras en la BD, pero tendria que hacer primero un metodo qe retorne la cantidad de registros palabra en la tabla Palabras y despues usarlo en este ciclo for
         {
-            Log.d("Palabra Nro.  " + i + " --> ",base_datos.recuperarPalabrota(i));
+            Log.d("Palabra BD --> Nro." + i + " -- ",base_datos.recuperarPalabrota(i));
         }
 
         Log.d("TOTAL PALABRAS -> ",base_datos.total_palabras_en_BD() + "");
@@ -763,6 +868,99 @@ public class MainActivity extends AppCompatActivity {
             nroVidas.setText("6");
             total_coincidencias_varGlobal = 0;      //Se inicializa de nuevo la variable global creada
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // Agrego lo que tiene que ver con los distintos niveles y estrellas(FEDE)
+            ImageView e1 = (ImageView) findViewById(R.id.estrella1);
+            ImageView e2 = (ImageView) findViewById(R.id.estrella2);
+            ImageView e3 = (ImageView) findViewById(R.id.estrella3);
+
+            TextView niv = (TextView) findViewById(R.id.textNivel);
+            TextView est = (TextView) findViewById(R.id.textViewEstrellas);
+
+            puntos++;
+
+            agregarEstrella();
+
+
+            if(puntos==3)
+            {
+                e1.setVisibility(View.INVISIBLE);
+                e2.setVisibility(View.INVISIBLE);
+                e3.setVisibility(View.INVISIBLE);
+                puntos=0;
+                est.setText("0/3");
+
+                if(nivel <3)
+                {
+                    nivel++;
+                //    Toast.makeText(this, "Subes un Nivel!!!", Toast.LENGTH_LONG).show();
+
+                    if(nivel==2)
+                    {
+                        niv.setText("Medio");
+                    }
+                    else
+                    {
+                        niv.setText("Dificil");
+                    }
+
+                }
+                else
+                {
+                  //  Toast.makeText(this, "Felicitaciones, no quedan mas niveles por avanzar!!!", Toast.LENGTH_LONG).show();
+
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             probando_palabra_modificada = palabra;
 
             Button btn_cambiar = (Button) findViewById(R.id.cambiarPalabra);
@@ -827,6 +1025,32 @@ public class MainActivity extends AppCompatActivity {
 
                     Toast.makeText(this, "Perdiste!!!", Toast.LENGTH_LONG).show();
 
+
+
+
+
+
+
+
+
+
+
+                    //Saco una estrella pq pierde(FEDE)
+                    sacarEstrella();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     nroVidas.setText("0");
                     //hacer un ciclo que espere y te muestre que perdiste y que tu cantidad de vidas es 0
                     nroVidas.setText("6");
@@ -854,6 +1078,120 @@ public class MainActivity extends AppCompatActivity {
 
 
     }       //FIN del metodo "verificarExistenciaLetra()"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void agregarEstrella()
+    {
+        ImageView e1 = (ImageView) findViewById(R.id.estrella1);
+        ImageView e2 = (ImageView) findViewById(R.id.estrella2);
+        ImageView e3 = (ImageView) findViewById(R.id.estrella3);
+        TextView tex = (TextView) findViewById(R.id.textViewEstrellas);
+        switch(puntos){
+            case 1:
+            {
+                e1.setVisibility(View.VISIBLE);
+                tex.setText("1/3");
+                break;
+            }
+            case 2:
+            {
+                e1.setVisibility(View.VISIBLE);
+                e2.setVisibility(View.VISIBLE);
+                tex.setText("2/3");
+                break;
+            }
+            case 3:
+            {
+                e3.setVisibility(View.VISIBLE);
+                tex.setText("3/3");
+                break;
+            }
+        }
+    }
+
+
+
+    public void sacarEstrella()
+    {
+        ImageView e1 = (ImageView) findViewById(R.id.estrella1);
+        ImageView e2 = (ImageView) findViewById(R.id.estrella2);
+        TextView tex = (TextView) findViewById(R.id.textViewEstrellas);
+
+        switch(puntos)
+        {
+
+            case 1:
+            {
+                e1.setVisibility(View.INVISIBLE);
+                tex.setText("0/3");
+                break;
+            }
+            case 2:
+            {
+                e2.setVisibility(View.INVISIBLE);
+                tex.setText("1/3");
+                break;
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1007,6 +1345,74 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public int nivel_facil_medio_dificil_a_NRO(String ni)
+    {
+        int nivel =1;
+
+        if(ni == "Facil")
+            nivel = 1;
+        if(ni == "Medio")
+            nivel = 2;
+        if(ni == "Dificil")
+            nivel = 3;
+
+
+        return  nivel;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public void cambiar_palabra(View v)
     {
         Hilo_Clase hilito = new Hilo_Clase();
@@ -1020,18 +1426,35 @@ public class MainActivity extends AppCompatActivity {
     {
       private String pal="";
 
+
+      TextView texto_nivel = (TextView) findViewById(R.id.textNivel);
+
+      int nro_nivel =  nivel_facil_medio_dificil_a_NRO(texto_nivel.getText().toString());
+
+
+
+
+
+
         @Override
         protected void onPreExecute()
         {
 
-            /*
-                - ESTAS LINEAS IBAN CUANDO SE OBTENIAN PALABRAS DE LA BASE DE DATOS SQLITE LOCAL DEL CELULAR EMULADOR
-
+                // ESTAS LINEAS IBAN CUANDO SE OBTENIAN PALABRAS DE LA BASE DE DATOS SQLITE LOCAL DEL CELULAR EMULADOR
+/*
                 palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
                 total_coincidencias_varGlobal = 0;
                 letrasVisibles(palabra.length());                                       //ESTO SOLUCIONA EL PROBLEMA DE QUE NO SE VISIBILIZABAN LAS LETRAS DE ALGUNAS PALABRAS LARGAS
                 probando_palabra_modificada = palabra;
-            */
+*/
+
+
+
+
+
+            Log.d("Nro de nivel -> ",nro_nivel + "");
+
+
         }
 
 
@@ -1039,32 +1462,133 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params)
         {
 
+
             //Agregado para obtener la palabra del Servicio Rest
             HttpClient httpClient = new DefaultHttpClient();
-            HttpGet del = new HttpGet("http://serviciopalabras.somee.com/Api/Palabras");
-            //HttpGet del = new HttpGet("http://192.168.1.6:10518/Api/Palabras");               //ESTO ES PARA OBTENER PALABRAS DEL SERVICIO REST LOCAL, HECHO EN VISUAL STUDIO
+            //HttpGet del = new HttpGet("http://serviciopalabras.somee.com/Api/Palabras");
+            HttpGet del = new HttpGet("http://192.168.1.4:10518/Api/Palabras");               //ESTO ES PARA OBTENER PALABRAS DEL SERVICIO REST LOCAL, HECHO EN VISUAL STUDIO
             del.setHeader("content-type", "application/json");
             //Fin de lo agregado para el Servicio Rest
 
 
             try
             {
+
+
                 //Agregado para obtener la palabra del Servicio Rest
                 HttpResponse resp = httpClient.execute(del);
                 String respStr = EntityUtils.toString(resp.getEntity());
-                JSONObject respJSON = new JSONObject(respStr);
-                pal = respJSON.getString("palabra");
+                //JSONObject respJSON = new JSONObject(respStr);
+                JSONArray jsonArrays = new JSONArray(respStr);
+
+
+              //  pal = respJSON.getString("palabra");      // --> Esto lo tengo qe poner de nuevo sin comentario
+
                 //Fin de lo agregado para el servicio Rest
 
 
+
+
+
+
+
+
+
+
+
+                List<Palabra> lista_palabras = new ArrayList();
+              //  JSONObject jsonArray= null;
+               // JSONArray jsonArrays = null;
+
+                Palabra palabrin;
+
+
+                //jsonArrays = respJSON.getJSONArray("Palabras");
+
+
+                //En este FOR igualo todo el JSONArray que traigo desde el servicio REST, y lo paso a una lista de objetos Palabra, y asi despues poder manipularlo mejor
+                for(int i=0; i<jsonArrays.length(); i++){
+
+                   JSONObject objetus = jsonArrays.getJSONObject(i);
+
+                    //Todos los objetos Palabra van a tener el mismo ID, pero en realidad no me importa si se repiten los id, ya que en esta instancia no trabajo con BD, sino que trabajo palabras por Nivel, y todas las palabras que estan en el bloc de notas que sera mi JSONArray son distintas entre ellas, porque
+                    //nosotros somos los que cargamos a mano las palabras, pero en realidad, en un futuro, se debera tener una BD de palabras, cada una con un ID Unique, y que se permita cargar y modificar palabras
+
+                    //Use el constructor que agregue para que no reciba por parametro el ID de palabra, ya que no me importa en este caso.
+                    palabrin = new Palabra(objetus.getString("palabra"), objetus.getInt("nivel") );
+
+                    lista_palabras.add(palabrin);
+
+                    Log.d("Palabra REST Nro. " + (i+1), palabrin.getPalabra());
+
+                }
+
+
+
+
+                //Nueva lista de palabras que pertenecen al nivel que se selecciono, en este caso, puse por defecto que sea nivel 2 en el if
+                List<Palabra> lista_palabras_Por_Nivel = new ArrayList();
+                Palabra palabra_por_nivel;
+
+
+
+
+                for (int j = 0; j < lista_palabras.size(); j++)
+                {
+
+
+
+                    //Aca en vez de poner nro_monedas, va a tener que ir el TextView del nivel en que se encuentra el jugador
+                    if(lista_palabras.get(j).getNivel() == nro_nivel)
+                    {
+
+
+
+                        //Creo la palabra que traigo de la lista del JSON, y la palabra a crear, es cada una de las palabras del JSONArray que pertenecen al nivel del jugador
+                        palabra_por_nivel = new Palabra(lista_palabras.get(j).getPalabra(),lista_palabras.get(j).getNivel());
+
+
+                        //Lleno la lista de palabras por nivel
+                        lista_palabras_Por_Nivel.add(palabra_por_nivel);
+                    }
+
+                }
+
+
+
+                int nro_random = (int) Math.floor(Math.random()*(lista_palabras_Por_Nivel.size()));
+
+
+                //Esta es la linea mas importante, que setea la palabra a mosrtar por una nueva de la lista de palabras pertenecientes al nivel en el que se encuentra el jugador
+                palabra = lista_palabras_Por_Nivel.get(nro_random).getPalabra();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 //Esta linea es nueva, iguala a la variable global "palabra" con la palabra "pal" que es traida del Servicio Rest
-                palabra = pal;
+                //palabra = pal;     // --> Esta linea la comente, pero asi tiene que ir si o si
+
 
 
                 //Estas lineas ya estaban
                 total_coincidencias_varGlobal = 0;
                 probando_palabra_modificada = palabra;
-
 
 
             }
