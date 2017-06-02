@@ -1,6 +1,8 @@
 package com.example.leoneldinh10.mi_ahorcado;
 
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +20,8 @@ import com.example.leoneldinh10.mi_ahorcado.Acceso_Base_Datos.Palabra;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -25,6 +29,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,7 +44,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+    private int estoyInvitado=0;
+    private String numpartida;
+    private String idusu1="1";//yo soy
+    private String nombreusu1="eric";//yo soy
+    private String idusu2; //compito con
+    private String nombreusu2;
+    private int ganador;
 
 
 
@@ -108,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
+      //  palabra = base_datos.recuperarPalabrota(obtener_aleatorio());
 
 
 
@@ -119,17 +131,6 @@ public class MainActivity extends AppCompatActivity {
         //Esto lo agregue porque la primera vez que cargaba la app, se mostraba una palabra cualquiera de la BD, sin importar el nivel en el cual se encontraba el jugador!
         Hilo_Clase hilito = new Hilo_Clase();
         hilito.execute();
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -148,6 +149,76 @@ public class MainActivity extends AppCompatActivity {
 
 
         verificar_diccionario_letras_BD();
+
+
+
+
+
+
+
+
+
+
+
+
+
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+
+
+        TimerTask task = new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                handler.post(new Runnable()
+                {
+                    public void run()
+                    {
+                        try
+                        {
+                            if(estoyInvitado==0)
+                            {
+                                Meinvitaron inv = new Meinvitaron();
+                                inv.execute(idusu1);
+                                Log.d("HD -> ", palabra);
+                            }
+
+                        } catch (Exception e)
+                        {
+                            Log.e("error", e.getMessage());
+                        }
+                    }
+                });
+            }
+        };
+
+        timer.schedule(task, 0, 2000);
+        Bundle bundle = this.getIntent().getExtras();
+        if (bundle!=null){
+            idusu2=String.valueOf(bundle.getInt("id"));
+            nombreusu2=bundle.getString("nombre");
+            crearParitda part= new crearParitda();
+            part.execute(idusu1, idusu2, palabra);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
 
@@ -1065,6 +1136,59 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("Palabra Original -> " , palabra);
                     Log.d("Palabra Modifi 2 -> ", probando_palabra_modificada);
 
+
+
+
+
+
+                    TextView nivPer = (TextView) findViewById(R.id.textNivel);
+
+                    //agrego codigo referido a los niveles de dificultad(FEDE)
+                    if(puntos ==0)
+                    {
+                        if(nivel==1)
+                        {
+                            Toast.makeText(this, "Sigues en nivel Facil!!!", Toast.LENGTH_LONG).show();
+                        }
+                        else
+                        {
+                            nivel--;
+                            puntos=2;
+                            agregarEstrella();
+                            Toast.makeText(this, "Bajas un nivel!!!", Toast.LENGTH_LONG).show();
+                            if(nivel==2)
+                            {
+                                nivPer.setText("Medio");
+                            }
+                            else
+                            {
+                                nivPer.setText("Fácil");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        puntos--;
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     break;
 
                 }   //Fin Case 0
@@ -1466,7 +1590,7 @@ public class MainActivity extends AppCompatActivity {
             //Agregado para obtener la palabra del Servicio Rest
             HttpClient httpClient = new DefaultHttpClient();
             //HttpGet del = new HttpGet("http://serviciopalabras.somee.com/Api/Palabras");
-            HttpGet del = new HttpGet("http://192.168.1.4:10518/Api/Palabras");               //ESTO ES PARA OBTENER PALABRAS DEL SERVICIO REST LOCAL, HECHO EN VISUAL STUDIO
+            HttpGet del = new HttpGet("http://192.168.43.237:10518/Api/Palabras");               //ESTO ES PARA OBTENER PALABRAS DEL SERVICIO REST LOCAL, HECHO EN VISUAL STUDIO
             del.setHeader("content-type", "application/json");
             //Fin de lo agregado para el Servicio Rest
 
@@ -1644,4 +1768,233 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private class Meinvitaron extends AsyncTask<String,Integer,Boolean> {
+        private  int num;
+        private String pal;
+
+        protected Boolean doInBackground(String... params) {
+
+            boolean resul = true;
+
+
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpPost post = new
+                    HttpPost("http://ahoracado.somee.com/Api/jugando");
+
+            post.setHeader("content-type", "application/json");
+
+            try
+            {
+                //Construimos el objeto cliente en formato JSON
+                JSONObject dato = new JSONObject();
+
+                dato.put("idusu2",Integer.parseInt(params[0]));
+
+
+                StringEntity entity = new StringEntity(dato.toString());
+                post.setEntity(entity);
+
+                HttpResponse resp = httpClient.execute(post);
+                String respStr = EntityUtils.toString(resp.getEntity());
+                if(!respStr.equals("")){
+                    JSONObject respJSON = new JSONObject(respStr);
+                    num= respJSON.getInt("idpartida");
+                    pal= respJSON.getString("palabra");
+                }
+                else resul =false;
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+                resul = false;
+            }
+
+            return resul;
+        }
+
+        protected void onPostExecute(Boolean result) {
+
+            if (result)
+            {
+
+                numpartida=String.valueOf(num);
+                palabra=pal;
+                probando_palabra_modificada =palabra;
+                limpiarLetras();
+                letrasVisibles(palabra.length());
+                estoyInvitado=1;
+                Toast.makeText(MainActivity.this, "TE INVITARON A COMPETIR", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
+    public void versus(View v)
+    {
+        Intent intent =  new Intent(MainActivity.this, jugadoresConectados.class);
+        startActivity(intent);
+    }
+
+    private class crearParitda extends AsyncTask<String,Integer,Boolean> {
+        private int num;
+        protected Boolean doInBackground(String... params) {
+
+            boolean resul = true;
+
+
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpPost post = new
+                    HttpPost("http://ahoracado.somee.com/Api/crear");
+
+            post.setHeader("content-type", "application/json");
+
+            try
+            {
+                //Construimos el objeto cliente en formato JSON
+                JSONObject dato = new JSONObject();
+
+                dato.put("idusu1",Integer.parseInt(params[0]));
+                dato.put("idusu2",Integer.parseInt(params[1]));
+                dato.put("pal",params[2]);
+
+                StringEntity entity = new StringEntity(dato.toString());
+                post.setEntity(entity);
+
+                HttpResponse resp = httpClient.execute(post);
+                String respStr = EntityUtils.toString(resp.getEntity());
+                if(!respStr.equals("")){
+                    num= Integer.parseInt(respStr);
+
+                }
+                else resul =false;
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+                resul = false;
+            }
+
+            return resul;
+        }
+
+        protected void onPostExecute(Boolean result) {
+
+            if (result)
+            {
+                Log.d("A jugar!!!!!!!!", String.valueOf(num));
+                numpartida=String.valueOf(num);
+
+            }
+        }
+    }
+
+    private class setGanador extends AsyncTask<String,Integer,Boolean> {
+        private int gana;
+        protected Boolean doInBackground(String... params) {
+
+            boolean resul = true;
+
+
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpPost post = new
+                    HttpPost("http://ahoracado.somee.com/Api/ganador");
+
+            post.setHeader("content-type", "application/json");
+
+            try
+            {
+                //Construimos el objeto cliente en formato JSON
+                JSONObject dato = new JSONObject();
+
+                dato.put("idusu",Integer.parseInt(params[0]));
+                dato.put("idpartida",Integer.parseInt(params[1]));
+
+
+                StringEntity entity = new StringEntity(dato.toString());
+                post.setEntity(entity);
+
+                HttpResponse resp = httpClient.execute(post);
+                String respStr = EntityUtils.toString(resp.getEntity());
+                if(!respStr.equals("")){
+                    gana= Integer.parseInt(respStr);
+
+                }
+                else resul =false;
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+                resul = false;
+            }
+
+            return resul;
+        }
+
+        protected void onPostExecute(Boolean result) {
+
+            if (result)
+            {
+                Log.d("Ganador!!!!!!!!", String.valueOf(gana));
+                ganador=gana;
+                if(ganador== Integer.parseInt(idusu1)){
+                    Toast.makeText(MainActivity.this, "GANO EL USUARIO!!!---" + nombreusu1, Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Toast.makeText(MainActivity.this, "GANO EL USUARIO!!!---" + nombreusu2, Toast.LENGTH_LONG).show();
+                }
+            }
+
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+}   //Fin de Clase MainActivity
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

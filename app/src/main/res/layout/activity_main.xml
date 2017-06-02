@@ -1313,7 +1313,7 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="30dp">
+                android:layout_height="25dp">
 
 
 
@@ -1366,7 +1366,21 @@
 
 
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="35dp">
 
+
+                <Button
+                    android:text="Modo Versus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/versus"
+                    android:layout_weight="1"
+                    android:onClick="versus"/>
+
+            </LinearLayout>
 
 
 
@@ -1380,7 +1394,7 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="50dp">
+                android:layout_height="35dp">
 
 
                 <Button
@@ -1400,10 +1414,10 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="50dp">
+                android:layout_height="35dp">
 
                 <Button
-                    android:text="Cambiar de palabra"
+                    android:text="Cambiar palabra"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/cambiarPalabra"
